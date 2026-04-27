@@ -1,0 +1,10 @@
+{
+  "name": "星月赴约",
+  "short_name": "星月赴约",
+  "description": "京沪异地恋双人专属记录空间",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1d3d",
+  "theme_color": "#0f1d3d",
+  "icons": []
+}
