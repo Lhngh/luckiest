@@ -198,39 +198,39 @@ export function SceneHero({
   const mainPlacements = [
     {
       key: "squirrel",
-      placement: projectToSphere(-38, 18),
+      placement: projectToSphere(-38, 14),
       node: (
-        <div className="h-24 w-24">
+        <div className="h-16 w-16 sm:h-24 sm:w-24">
           <Squirrel />
         </div>
       ),
-      lift: 96,
+      lift: 84,
     },
     {
       key: "couple",
-      placement: projectToSphere(4, 29),
+      placement: projectToSphere(4, 20),
       node: (
-        <div className="h-56 w-[248px]">
+        <div className="h-40 w-[132px] sm:h-56 sm:w-[248px]">
           <CoupleIllustration />
         </div>
       ),
-      lift: 96,
+      lift: 84,
     },
     {
       key: "pony",
-      placement: projectToSphere(42, 17),
+      placement: projectToSphere(42, 13),
       node: (
-        <div className="h-28 w-36">
+        <div className="h-20 w-24 sm:h-28 sm:w-36">
           <BluePony />
         </div>
       ),
-      lift: 92,
+      lift: 82,
     },
   ].sort((a, b) => a.placement.z - b.placement.z);
 
   return (
     <div className="relative w-full max-w-[1240px] overflow-hidden rounded-[42px]">
-      <div className="relative min-h-[760px] overflow-hidden rounded-[42px] md:min-h-[880px]">
+      <div className="relative min-h-[780px] overflow-hidden rounded-[42px] md:min-h-[880px]">
         <div className="absolute inset-0 rounded-[42px] bg-[radial-gradient(circle_at_50%_10%,rgba(255,250,242,0.95),transparent_15%),radial-gradient(circle_at_16%_18%,rgba(248,211,223,0.72),transparent_28%),radial-gradient(circle_at_84%_24%,rgba(235,196,228,0.44),transparent_26%),radial-gradient(circle_at_50%_92%,rgba(195,189,243,0.54),transparent_32%),linear-gradient(180deg,#f8ece7_0%,#f4dce5_42%,#e5d5ec_72%,#d5d4ef_100%)]" />
         <div className="absolute inset-0 rounded-[42px] bg-[radial-gradient(circle_at_20%_68%,rgba(255,255,255,0.3),transparent_18%),radial-gradient(circle_at_76%_72%,rgba(234,211,255,0.24),transparent_20%)]" />
         <div className="absolute left-1/2 top-[8%] h-28 w-28 -translate-x-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,252,241,1),rgba(255,245,230,0.56)_42%,transparent_76%)] blur-sm sm:h-36 sm:w-36" />
@@ -259,8 +259,8 @@ export function SceneHero({
         <OrbitBadge className="right-4 top-10 w-[184px] sm:right-8 sm:w-[228px]" title="星球树木" value={`已经长到 ${treeCount} 棵`} href="/meet" />
         <OrbitBadge className="left-1/2 top-[12%] w-[220px] -translate-x-1/2 sm:w-[300px]" title="下次见面" value={countdownLabel} />
 
-        <div className="absolute inset-x-0 top-[17%] flex justify-center">
-          <div className="relative aspect-square w-[min(94vw,820px)]">
+        <div className="absolute inset-x-0 top-[23%] flex justify-center sm:top-[17%]">
+          <div className="relative aspect-square w-[min(82vw,820px)] sm:w-[min(94vw,820px)]">
             <div className="absolute inset-[10%] rounded-full bg-[radial-gradient(circle,rgba(247,195,222,0.5),rgba(224,208,247,0.24)_48%,transparent_74%)] blur-3xl" />
             <div className="absolute left-[7%] right-[7%] top-[47%] h-[16%] rounded-full border border-white/35 opacity-36" />
             <div className="absolute left-[5%] right-[5%] top-[50%] h-[18%] rounded-full border border-white/22 opacity-22" />
