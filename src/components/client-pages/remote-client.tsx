@@ -91,7 +91,7 @@ export function RemoteClient() {
           </>
         ) : (
           <div className="mt-6">
-            <EmptyState title="还没有候选小事" description="先新增几件异地也能一起做的小事，之后这里就能随机抽取了。" />
+            <EmptyState text="还没有候选小事，先新增几件异地也能一起做的小事，之后这里就能随机抽取了。" />
           </div>
         )}
       </PaperCard>
