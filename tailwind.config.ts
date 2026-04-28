@@ -9,21 +9,24 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        midnight: "#0f1d3d",
-        moon: "#f4f0d8",
-        starlight: "#fef7d8",
-        aurora: "#6e87d6",
-        glow: "#ffd987",
-        pine: "#24324f",
-        blush: "#f7d2b2",
+          midnight: "#35285a",
+          moon: "#fff6f5",
+          starlight: "#6f5b84",
+          aurora: "#c8b6ff",
+          glow: "#d780a8",
+          pine: "#5f4b7b",
+          blush: "#f8cde0",
+          rose: "#f4a8cb",
+          lilac: "#d8c7ff",
+          mist: "#fff0f5",
       },
       fontFamily: {
         display: ["var(--font-display)", "serif"],
         body: ["var(--font-body)", "sans-serif"],
       },
       boxShadow: {
-        paper: "0 18px 50px rgba(15, 29, 61, 0.16)",
-        glow: "0 0 30px rgba(255, 217, 135, 0.28)",
+        paper: "0 22px 60px rgba(92, 64, 121, 0.18)",
+        glow: "0 0 34px rgba(255, 204, 228, 0.42)",
       },
       animation: {
         shimmer: "shimmer 7s ease-in-out infinite",
@@ -33,7 +36,7 @@ const config: Config = {
         breathe: "breathe 6s ease-in-out infinite",
       },
       backgroundImage: {
-        paper: "radial-gradient(circle at 20% 20%, rgba(255,255,255,0.22), transparent 34%), radial-gradient(circle at 80% 0%, rgba(255,248,221,0.18), transparent 26%), linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.05))",
+        paper: "radial-gradient(circle at 18% 20%, rgba(255,255,255,0.32), transparent 32%), radial-gradient(circle at 86% 10%, rgba(255,218,236,0.28), transparent 26%), linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.08))",
       },
     },
   },

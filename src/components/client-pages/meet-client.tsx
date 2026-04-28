@@ -22,6 +22,8 @@ export function MeetClient() {
 
   const upcoming = useMemo(() => data.find((item) => item.status !== "已完成"), [data]);
   const history = useMemo(() => data.filter((item) => item.status === "已完成"), [data]);
+  const completedCount = history.length;
+  const treeCount = 5 + completedCount;
 
   async function handleSubmit() {
     if (!form.next_date || !form.location || !form.role) return;
@@ -46,22 +48,49 @@ export function MeetClient() {
     await refresh();
   }
 
+  async function handleComplete(item: MeetPlan) {
+    await apiFetch(`/api/data/meet_plans/${item.id}`, {
+      method: "PATCH",
+      body: JSON.stringify({
+        next_date: toInputDate(item.next_date),
+        location: item.location,
+        role: item.role,
+        status: "已完成",
+        note: item.note ?? null,
+      }),
+    });
+    await refresh();
+  }
+
   return (
     <div className="animate-fadeIn space-y-6">
       <div>
         <p className="text-sm tracking-[0.32em] text-starlight/60">见面计划</p>
-        <h1 className="mt-2 font-display text-4xl text-starlight">让每一次奔赴都有回响</h1>
+        <h1 className="mt-2 font-display text-4xl text-starlight">把想见面的日子轻轻记下</h1>
       </div>
 
       <PaperCard>
         <p className="text-sm leading-8 text-starlight/78">
-          每月 1 次，轮流往返，不单方面消耗；长假加更。把下次见面定下来，也把已经完成的奔赴留在月色里。
+          每月 1 次，轮流安排，不单方面消耗；长假加更。把下次见面定下来，也把已经拥有过的时光留在月色里。
         </p>
+      </PaperCard>
+
+      <PaperCard className="grid gap-4 sm:grid-cols-2">
+        <div className="rounded-[24px] border border-white/16 bg-white/8 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">累计见面</p>
+          <p className="mt-2 font-display text-3xl text-starlight">{completedCount} 次</p>
+          <p className="mt-1 text-xs text-starlight/60">已完成的见面会持久化在数据库里</p>
+        </div>
+        <div className="rounded-[24px] border border-white/16 bg-white/8 p-4">
+          <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">星球树木</p>
+          <p className="mt-2 font-display text-3xl text-starlight">{treeCount} 棵</p>
+          <p className="mt-1 text-xs text-starlight/60">规则：起始 5 棵，每完成一次见面多 1 棵</p>
+        </div>
       </PaperCard>
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <PaperCard>
-          <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">新增奔赴</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">新增计划</p>
           <div className="mt-4 grid gap-4">
             <div>
               <FieldLabel>日期</FieldLabel>
@@ -69,11 +98,11 @@ export function MeetClient() {
             </div>
             <div>
               <FieldLabel>地点</FieldLabel>
-              <Input placeholder="上海 / 北京 / 共同城市" value={form.location} disabled={!session?.canEdit} onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))} />
+              <Input placeholder="想去的城市或约会地点" value={form.location} disabled={!session?.canEdit} onChange={(e) => setForm((prev) => ({ ...prev, location: e.target.value }))} />
             </div>
             <div>
-              <FieldLabel>往返人</FieldLabel>
-              <Input placeholder="这次由谁奔赴" value={form.role} disabled={!session?.canEdit} onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))} />
+              <FieldLabel>安排</FieldLabel>
+              <Input placeholder="这次由谁来安排或确认" value={form.role} disabled={!session?.canEdit} onChange={(e) => setForm((prev) => ({ ...prev, role: e.target.value }))} />
             </div>
             <div>
               <FieldLabel>状态</FieldLabel>
@@ -88,7 +117,7 @@ export function MeetClient() {
               <Textarea placeholder="比如想一起吃的店、要去的路、想拍的合照位" value={form.note} disabled={!session?.canEdit} onChange={(e) => setForm((prev) => ({ ...prev, note: e.target.value }))} />
             </div>
             <div className="flex flex-wrap gap-3">
-              <Button disabled={!session?.canEdit || submitting} onClick={handleSubmit}>{editingId ? "保存修改" : "新增奔赴"}</Button>
+              <Button disabled={!session?.canEdit || submitting} onClick={handleSubmit}>{editingId ? "保存修改" : "新增计划"}</Button>
               {editingId ? <Button className="bg-white/8" onClick={() => { setEditingId(null); setForm(initialForm); }}>取消编辑</Button> : null}
             </div>
           </div>
@@ -110,7 +139,7 @@ export function MeetClient() {
           </PaperCard>
 
           <PaperCard>
-            <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">历史奔赴记录</p>
+            <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">过往见面记录</p>
             <div className="mt-4 space-y-4">
               {loading ? <p className="text-sm text-starlight/70">正在轻轻翻看旅程...</p> : null}
               {error ? <p className="text-sm text-rose-200">{error}</p> : null}
@@ -126,7 +155,10 @@ export function MeetClient() {
                   </div>
                   {item.note ? <p className="mt-3 text-sm leading-7 text-starlight/76">{item.note}</p> : null}
                   {session?.canEdit ? (
-                    <div className="mt-4 flex gap-3">
+                    <div className="mt-4 flex flex-wrap gap-3">
+                      {item.status !== "已完成" ? (
+                        <Button onClick={() => handleComplete(item)}>标记为已完成</Button>
+                      ) : null}
                       <Button className="bg-white/8" onClick={() => { setEditingId(item.id); setForm({ next_date: toInputDate(item.next_date), location: item.location, role: item.role, status: item.status, note: item.note ?? "" }); }}>编辑</Button>
                       <Button className="bg-rose-300/10 text-rose-100" onClick={() => handleDelete(item.id)}>删除</Button>
                     </div>
