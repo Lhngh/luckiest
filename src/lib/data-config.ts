@@ -7,6 +7,7 @@ type ResourceName =
   | "enjoy_plans"
   | "messages"
   | "wishes"
+  | "long_distance_ideas"
   | "profiles";
 
 interface ResourceConfig {
@@ -86,6 +87,15 @@ export const resourceConfig: Record<ResourceName, ResourceConfig> = {
     mutableFields: ["content", "is_completed", "completed_at"],
     allowCreate: true,
     allowPatch: true,
+    allowDelete: true,
+  },
+  long_distance_ideas: {
+    table: "long_distance_ideas",
+    orderBy: "created_at",
+    ascending: false,
+    mutableFields: ["content"],
+    allowCreate: true,
+    allowPatch: false,
     allowDelete: true,
   },
 };

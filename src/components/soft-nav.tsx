@@ -10,8 +10,9 @@ export function SoftNav() {
   const homeSideItems = navItems.filter((item) => item.href !== "/");
 
   if (pathname === "/") {
-    const leftItems = homeSideItems.slice(0, 3);
-    const rightItems = homeSideItems.slice(3);
+    const splitIndex = Math.ceil(homeSideItems.length / 2);
+    const leftItems = homeSideItems.slice(0, splitIndex);
+    const rightItems = homeSideItems.slice(splitIndex);
 
     return (
       <nav className="pointer-events-none fixed inset-y-0 left-0 right-0 z-50 flex items-center justify-between px-2 sm:px-4 lg:px-8">
@@ -47,7 +48,7 @@ export function SoftNav() {
 
   return (
     <nav className="fixed bottom-4 left-1/2 z-50 w-[min(94vw,720px)] -translate-x-1/2 rounded-full border border-white/45 bg-[rgba(255,247,252,0.68)] p-2 shadow-paper backdrop-blur-md">
-      <ul className="grid grid-cols-6 gap-1">
+      <ul className="grid gap-1" style={{ gridTemplateColumns: `repeat(${navItems.length}, minmax(0, 1fr))` }}>
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (

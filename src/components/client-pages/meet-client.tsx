@@ -71,7 +71,7 @@ export function MeetClient() {
 
       <PaperCard>
         <p className="text-sm leading-8 text-starlight/78">
-          每月 1 次，轮流安排，不单方面消耗；长假加更。把下次见面定下来，也把已经拥有过的时光留在月色里。
+          把下次见面定下来，也把已经拥有过的时光留在月色里。
         </p>
       </PaperCard>
 

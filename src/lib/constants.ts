@@ -1,4 +1,4 @@
-import { BookOpen, HeartHandshake, Home, MessageCircleHeart, Sparkles, Stars } from "lucide-react";
+import { BookOpen, Dices, HeartHandshake, Home, MessageCircleHeart, Sparkles, Stars } from "lucide-react";
 import type { ViewerKey } from "@/lib/types";
 
 export const viewerMeta: Record<ViewerKey, { name: string; whisper: string }> = {
@@ -9,6 +9,7 @@ export const viewerMeta: Record<ViewerKey, { name: string; whisper: string }> = 
 export const navItems = [
   { href: "/", label: "首页", icon: Home },
   { href: "/meet", label: "见面", icon: HeartHandshake },
+  { href: "/remote", label: "异地", icon: Dices },
   { href: "/book", label: "共读", icon: BookOpen },
   { href: "/enjoy", label: "共赏", icon: Stars },
   { href: "/message", label: "留言", icon: MessageCircleHeart },

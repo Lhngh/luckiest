@@ -62,6 +62,12 @@ export interface Wish {
   created_at: string;
 }
 
+export interface LongDistanceIdea {
+  id: string;
+  content: string;
+  created_at: string;
+}
+
 export interface EditorSession {
   viewer: ViewerKey;
   name: string;
