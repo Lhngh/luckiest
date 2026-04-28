@@ -266,19 +266,19 @@ export function SceneHero({
             <div className="absolute left-[5%] right-[5%] top-[50%] h-[18%] rounded-full border border-white/22 opacity-22" />
 
             <div className="absolute inset-[14%]">
-              <div className="absolute inset-0 rounded-full border border-white/34 bg-[linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02))] shadow-[0_28px_80px_rgba(202,159,198,0.22)]" />
-              <div className="absolute inset-[1.8%] overflow-hidden rounded-full border border-white/24 bg-[radial-gradient(circle_at_31%_26%,#fff7f3_0%,#f7cde1_13%,#edaee6_30%,#cfb1ff_58%,#b7c2ff_78%,#92a7f1_100%)] shadow-[inset_-56px_-76px_120px_rgba(141,124,182,0.32),inset_18px_16px_40px_rgba(255,255,255,0.34)]">
-                <div className="absolute inset-0 bg-[radial-gradient(circle_at_32%_24%,rgba(255,255,255,0.9),transparent_16%),radial-gradient(circle_at_42%_40%,rgba(255,236,245,0.3),transparent_16%),radial-gradient(circle_at_74%_68%,rgba(155,165,239,0.3),transparent_24%)]" />
+              <div className="absolute inset-0 rounded-full border border-white/34 bg-[linear-gradient(180deg,rgba(255,255,255,0.1),rgba(255,255,255,0.02))] shadow-[0_28px_80px_rgba(202,159,198,0.22)]" />
+              <div className="absolute inset-[1.8%] overflow-hidden rounded-full border border-white/24 bg-[radial-gradient(circle_at_28%_24%,#fffaf6_0%,#f7d2e6_10%,#ef9fe2_28%,#c58fff_52%,#aab8ff_76%,#84a0ef_100%)] shadow-[inset_-56px_-76px_120px_rgba(124,111,176,0.38),inset_18px_16px_46px_rgba(255,255,255,0.38)]">
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_22%,rgba(255,255,255,0.98),transparent_18%),radial-gradient(circle_at_44%_38%,rgba(255,236,245,0.4),transparent_18%),radial-gradient(circle_at_74%_68%,rgba(155,165,239,0.38),transparent_28%)]" />
                 <div className="absolute inset-0 overflow-hidden rounded-full">
-                  <div className="absolute inset-y-[-4%] left-0 w-[200%] opacity-90 [animation:planetSurfaceRotate_32s_linear_infinite]">
-                    <div className="absolute left-[3%] top-[22%] h-[18%] w-[19%] rounded-full bg-[linear-gradient(180deg,rgba(255,252,250,0.82),rgba(255,227,240,0.4))] blur-sm" />
-                    <div className="absolute left-[18%] top-[28%] h-[20%] w-[13%] rounded-[42%] bg-[linear-gradient(180deg,rgba(255,233,244,0.72),rgba(231,217,255,0.3))] blur-sm" />
-                    <div className="absolute left-[30%] bottom-[22%] h-[22%] w-[18%] rounded-[46%] bg-[linear-gradient(180deg,rgba(198,231,214,0.32),rgba(152,180,246,0.26))] blur-md" />
-                    <div className="absolute left-[42%] bottom-[18%] h-[17%] w-[12%] rounded-[44%] bg-[linear-gradient(180deg,rgba(255,236,247,0.34),rgba(149,171,236,0.32))] blur-md" />
-                    <div className="absolute left-[53%] top-[22%] h-[18%] w-[19%] rounded-full bg-[linear-gradient(180deg,rgba(255,252,250,0.82),rgba(255,227,240,0.4))] blur-sm" />
-                    <div className="absolute left-[68%] top-[28%] h-[20%] w-[13%] rounded-[42%] bg-[linear-gradient(180deg,rgba(255,233,244,0.72),rgba(231,217,255,0.3))] blur-sm" />
-                    <div className="absolute left-[80%] bottom-[22%] h-[22%] w-[18%] rounded-[46%] bg-[linear-gradient(180deg,rgba(198,231,214,0.32),rgba(152,180,246,0.26))] blur-md" />
-                    <div className="absolute left-[92%] bottom-[18%] h-[17%] w-[12%] rounded-[44%] bg-[linear-gradient(180deg,rgba(255,236,247,0.34),rgba(149,171,236,0.32))] blur-md" />
+                  <div className="absolute inset-y-[-6%] left-0 w-[200%] opacity-100 [animation:planetSurfaceRotate_18s_linear_infinite]">
+                    <div className="absolute left-[1%] top-[18%] h-[24%] w-[25%] rounded-full bg-[linear-gradient(180deg,rgba(255,252,250,0.92),rgba(255,224,238,0.5))] blur-sm" />
+                    <div className="absolute left-[16%] top-[26%] h-[24%] w-[18%] rounded-[42%] bg-[linear-gradient(180deg,rgba(255,234,244,0.84),rgba(231,217,255,0.42))] blur-sm" />
+                    <div className="absolute left-[28%] bottom-[18%] h-[26%] w-[24%] rounded-[46%] bg-[linear-gradient(180deg,rgba(209,236,220,0.42),rgba(148,176,246,0.32))] blur-md" />
+                    <div className="absolute left-[44%] bottom-[15%] h-[20%] w-[15%] rounded-[44%] bg-[linear-gradient(180deg,rgba(255,236,247,0.46),rgba(149,171,236,0.38))] blur-md" />
+                    <div className="absolute left-[51%] top-[18%] h-[24%] w-[25%] rounded-full bg-[linear-gradient(180deg,rgba(255,252,250,0.92),rgba(255,224,238,0.5))] blur-sm" />
+                    <div className="absolute left-[66%] top-[26%] h-[24%] w-[18%] rounded-[42%] bg-[linear-gradient(180deg,rgba(255,234,244,0.84),rgba(231,217,255,0.42))] blur-sm" />
+                    <div className="absolute left-[78%] bottom-[18%] h-[26%] w-[24%] rounded-[46%] bg-[linear-gradient(180deg,rgba(209,236,220,0.42),rgba(148,176,246,0.32))] blur-md" />
+                    <div className="absolute left-[94%] bottom-[15%] h-[20%] w-[15%] rounded-[44%] bg-[linear-gradient(180deg,rgba(255,236,247,0.46),rgba(149,171,236,0.38))] blur-md" />
                   </div>
                 </div>
                 <div className="absolute inset-[5%] rounded-full border border-white/20 opacity-72" />
