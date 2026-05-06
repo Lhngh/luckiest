@@ -11,6 +11,11 @@ import { moods, viewerMeta } from "@/lib/constants";
 import type { MessageItem } from "@/lib/types";
 import { formatDateTime } from "@/lib/utils";
 
+const messageViewerName: Record<string, string> = {
+  xing: "糕糕",
+  yue: "汉堡",
+};
+
 export function MessageClient() {
   const { session } = useEditorSession();
   const { data, refresh } = useCollection<MessageItem>("messages", "messages");
@@ -63,7 +68,7 @@ export function MessageClient() {
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 text-starlight">
                     <span className="text-xl">{item.mood ?? "☆"}</span>
-                    <span className="font-medium">{viewerMeta[item.user_id].name}</span>
+                    <span className="font-medium">{messageViewerName[item.user_id] ?? viewerMeta[item.user_id].name}</span>
                   </div>
                   <span className="text-xs text-starlight/60">{formatDateTime(item.created_at)}</span>
                 </div>

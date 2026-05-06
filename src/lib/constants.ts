@@ -2,8 +2,8 @@ import { BookOpen, Dices, HeartHandshake, Home, MessageCircleHeart, Sparkles, St
 import type { ViewerKey } from "@/lib/types";
 
 export const viewerMeta: Record<ViewerKey, { name: string; whisper: string }> = {
-  xing: { name: "星星", whisper: "把想念写成温柔的路标" },
-  yue: { name: "月月", whisper: "让月光替你轻轻回应" },
+  xing: { name: "糕糕", whisper: "把想念写成温柔的路标" },
+  yue: { name: "汉堡", whisper: "让月光替你轻轻回应" },
 };
 
 export const navItems = [
