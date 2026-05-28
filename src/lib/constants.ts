@@ -18,5 +18,5 @@ export const navItems = [
 
 export const meetStatuses = ["待确认", "已确认", "已完成"] as const;
 export const bookStatuses = ["计划中", "进行中", "已归档"] as const;
-export const enjoyTypes = ["音乐剧", "音乐会", "文艺电影", "治愈动画"] as const;
+export const enjoyTypes = ["音乐剧", "音乐会", "电影", "动画", "电视剧", "综艺"] as const;
 export const moods = ["☆", "月", "花", "心"] as const;
