@@ -9,6 +9,7 @@ import { Button, FieldLabel, Input, Textarea } from "@/components/field";
 import { PaperCard } from "@/components/paper-card";
 import { useCollection } from "@/hooks/use-collection";
 import { viewerMeta } from "@/lib/constants";
+import { getBrowserSupabase } from "@/lib/supabase/browser";
 import type { AlbumPhoto } from "@/lib/types";
 import { formatDate, formatDateTime } from "@/lib/utils";
 
@@ -104,26 +105,58 @@ export function AlbumClient() {
     setSubmitting(true);
     setUploadStatus(null);
     setError(null);
+
     try {
-      setUploadStatus(file.size > MAX_UPLOAD_BYTES || file.type === "image/gif" ? "正在压缩照片..." : "正在上传照片...");
+      setUploadStatus(file.size > MAX_UPLOAD_BYTES || file.type === "image/gif" ? "正在压缩照片..." : "正在准备上传...");
       const uploadFile = await prepareUploadFile(file);
-      if (uploadFile !== file) {
-        setUploadStatus(`已压缩为 ${formatFileSize(uploadFile.size)}，正在上传...`);
+      const supabase = getBrowserSupabase();
+
+      if (!supabase) {
+        throw new Error("Supabase 浏览器配置缺失");
       }
 
-      const formData = new FormData();
-      formData.append("file", uploadFile);
-      formData.append("caption", caption);
-      formData.append("taken_at", takenAt);
+      const signResponse = await fetch("/api/photos/upload-url", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          file_name: uploadFile.name,
+          content_type: uploadFile.type,
+        }),
+      });
 
+      if (!signResponse.ok) {
+        throw new Error((await signResponse.text()) || "创建上传链接失败");
+      }
+
+      const signed = (await signResponse.json()) as { path: string; token: string };
+      setUploadStatus(`正在上传 ${formatFileSize(uploadFile.size)}...`);
+
+      const { error: uploadError } = await supabase.storage
+        .from("shared-album")
+        .uploadToSignedUrl(signed.path, signed.token, uploadFile, {
+          contentType: uploadFile.type,
+          upsert: false,
+        });
+
+      if (uploadError) {
+        throw new Error(uploadError.message);
+      }
+
+      setUploadStatus("正在保存照片信息...");
       const response = await fetch("/api/photos", {
         method: "POST",
-        body: formData,
+        headers: { "Content-Type": "application/json" },
         credentials: "include",
+        body: JSON.stringify({
+          storage_path: signed.path,
+          caption,
+          taken_at: takenAt,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error((await response.text()) || "上传失败");
+        throw new Error((await response.text()) || "保存照片失败");
       }
 
       setFile(null);
@@ -168,7 +201,7 @@ export function AlbumClient() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">上传照片</p>
-              <p className="mt-1 text-sm text-starlight/70">大图会自动降分辨率和压缩，动图会保存为静态照片。</p>
+              <p className="mt-1 text-sm text-starlight/70">大图会自动压缩，文件直传 Supabase，不再经过 Vercel 中转。</p>
             </div>
           </div>
 
