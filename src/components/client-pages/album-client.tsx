@@ -12,6 +12,75 @@ import { viewerMeta } from "@/lib/constants";
 import type { AlbumPhoto } from "@/lib/types";
 import { formatDate, formatDateTime } from "@/lib/utils";
 
+const MAX_UPLOAD_BYTES = 4 * 1024 * 1024;
+const MAX_IMAGE_EDGE = 2200;
+
+function formatFileSize(bytes: number) {
+  return `${(bytes / 1024 / 1024).toFixed(1)}MB`;
+}
+
+function loadImage(file: File) {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const image = new Image();
+    image.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(image);
+    };
+    image.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("这张照片暂时无法压缩，请换成 JPG、PNG 或 WebP"));
+    };
+    image.src = url;
+  });
+}
+
+function canvasToBlob(canvas: HTMLCanvasElement, quality: number) {
+  return new Promise<Blob>((resolve, reject) => {
+    canvas.toBlob(
+      (blob) => {
+        if (!blob) {
+          reject(new Error("照片压缩失败"));
+          return;
+        }
+        resolve(blob);
+      },
+      "image/jpeg",
+      quality,
+    );
+  });
+}
+
+async function prepareUploadFile(file: File) {
+  if (file.size <= MAX_UPLOAD_BYTES && file.type !== "image/gif") {
+    return file;
+  }
+
+  const image = await loadImage(file);
+  const scale = Math.min(1, MAX_IMAGE_EDGE / Math.max(image.naturalWidth, image.naturalHeight));
+  const width = Math.max(1, Math.round(image.naturalWidth * scale));
+  const height = Math.max(1, Math.round(image.naturalHeight * scale));
+  const canvas = document.createElement("canvas");
+  canvas.width = width;
+  canvas.height = height;
+
+  const context = canvas.getContext("2d");
+  if (!context) {
+    throw new Error("当前浏览器不支持照片压缩");
+  }
+
+  context.drawImage(image, 0, 0, width, height);
+
+  for (const quality of [0.86, 0.78, 0.7, 0.62, 0.54, 0.46, 0.38]) {
+    const blob = await canvasToBlob(canvas, quality);
+    if (blob.size <= MAX_UPLOAD_BYTES) {
+      return new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), { type: "image/jpeg" });
+    }
+  }
+
+  throw new Error("这张照片压缩后仍然超过 4MB，请先裁剪或换一张更小的照片");
+}
+
 export function AlbumClient() {
   const { session } = useEditorSession();
   const { data, refresh } = useCollection<AlbumPhoto>("album_photos", "album_photos");
@@ -19,6 +88,7 @@ export function AlbumClient() {
   const [caption, setCaption] = useState("");
   const [takenAt, setTakenAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
@@ -32,10 +102,17 @@ export function AlbumClient() {
   async function uploadPhoto() {
     if (!file) return;
     setSubmitting(true);
+    setUploadStatus(null);
     setError(null);
     try {
+      setUploadStatus(file.size > MAX_UPLOAD_BYTES || file.type === "image/gif" ? "正在压缩照片..." : "正在上传照片...");
+      const uploadFile = await prepareUploadFile(file);
+      if (uploadFile !== file) {
+        setUploadStatus(`已压缩为 ${formatFileSize(uploadFile.size)}，正在上传...`);
+      }
+
       const formData = new FormData();
-      formData.append("file", file);
+      formData.append("file", uploadFile);
       formData.append("caption", caption);
       formData.append("taken_at", takenAt);
 
@@ -52,9 +129,11 @@ export function AlbumClient() {
       setFile(null);
       setCaption("");
       setTakenAt("");
+      setUploadStatus(null);
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "上传失败");
+      setUploadStatus(null);
     } finally {
       setSubmitting(false);
     }
@@ -89,7 +168,7 @@ export function AlbumClient() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">上传照片</p>
-              <p className="mt-1 text-sm text-starlight/70">支持 JPG、PNG、WebP 等图片，单张最多 4MB。</p>
+              <p className="mt-1 text-sm text-starlight/70">大图会自动降分辨率和压缩，动图会保存为静态照片。</p>
             </div>
           </div>
 
@@ -100,8 +179,18 @@ export function AlbumClient() {
                 type="file"
                 accept="image/*"
                 disabled={!session?.canEdit || submitting}
-                onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+                onChange={(event) => {
+                  setFile(event.target.files?.[0] ?? null);
+                  setError(null);
+                  setUploadStatus(null);
+                }}
               />
+              {file ? (
+                <p className="mt-2 text-xs text-starlight/60">
+                  原图 {formatFileSize(file.size)}
+                  {file.type === "image/gif" ? "，上传时会转成静态照片" : ""}
+                </p>
+              ) : null}
             </div>
             {previewUrl ? (
               <div className="overflow-hidden rounded-[24px] border border-white/18 bg-white/8">
@@ -116,11 +205,12 @@ export function AlbumClient() {
               <FieldLabel>照片说明</FieldLabel>
               <Textarea value={caption} disabled={!session?.canEdit || submitting} placeholder="写下这张照片里的地点、心情或一句话" onChange={(event) => setCaption(event.target.value)} />
             </div>
+            {uploadStatus ? <p className="text-sm text-starlight/68">{uploadStatus}</p> : null}
             {error ? <p className="text-sm text-rose-200">{error}</p> : null}
             <Button disabled={!session?.canEdit || !file || submitting} onClick={uploadPhoto}>
               <span className="inline-flex items-center gap-2">
                 <UploadCloud className="h-4 w-4" />
-                {submitting ? "正在上传" : "加入相册"}
+                {submitting ? "处理中" : "加入相册"}
               </span>
             </Button>
           </div>
