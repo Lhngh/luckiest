@@ -85,81 +85,89 @@ async function prepareUploadFile(file: File) {
 export function AlbumClient() {
   const { session } = useEditorSession();
   const { data, refresh } = useCollection<AlbumPhoto>("album_photos", "album_photos");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
   const [caption, setCaption] = useState("");
   const [takenAt, setTakenAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [uploadStatus, setUploadStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const previewUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
+  const previewItems = useMemo(
+    () => files.slice(0, 6).map((file) => ({ file, url: URL.createObjectURL(file) })),
+    [files],
+  );
 
   useEffect(() => {
     return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
+      previewItems.forEach((item) => URL.revokeObjectURL(item.url));
     };
-  }, [previewUrl]);
+  }, [previewItems]);
 
-  async function uploadPhoto() {
-    if (!file) return;
+  async function uploadOne(file: File, index: number, total: number) {
+    setUploadStatus(`正在处理第 ${index + 1}/${total} 张：${file.name}`);
+    const uploadFile = await prepareUploadFile(file);
+    const supabase = getBrowserSupabase();
+
+    if (!supabase) {
+      throw new Error("Supabase 浏览器配置缺失");
+    }
+
+    const signResponse = await fetch("/api/photos/upload-url", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        file_name: uploadFile.name,
+        content_type: uploadFile.type,
+      }),
+    });
+
+    if (!signResponse.ok) {
+      throw new Error((await signResponse.text()) || "创建上传链接失败");
+    }
+
+    const signed = (await signResponse.json()) as { path: string; token: string };
+    setUploadStatus(`正在上传第 ${index + 1}/${total} 张：${formatFileSize(uploadFile.size)}`);
+
+    const { error: uploadError } = await supabase.storage
+      .from("shared-album")
+      .uploadToSignedUrl(signed.path, signed.token, uploadFile, {
+        contentType: uploadFile.type,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      throw new Error(uploadError.message);
+    }
+
+    const response = await fetch("/api/photos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({
+        storage_path: signed.path,
+        caption,
+        taken_at: takenAt,
+      }),
+    });
+
+    if (!response.ok) {
+      throw new Error((await response.text()) || "保存照片失败");
+    }
+  }
+
+  async function uploadPhotos() {
+    if (!files.length) return;
     setSubmitting(true);
     setUploadStatus(null);
     setError(null);
 
     try {
-      setUploadStatus(file.size > MAX_UPLOAD_BYTES || file.type === "image/gif" ? "正在压缩照片..." : "正在准备上传...");
-      const uploadFile = await prepareUploadFile(file);
-      const supabase = getBrowserSupabase();
-
-      if (!supabase) {
-        throw new Error("Supabase 浏览器配置缺失");
+      for (let index = 0; index < files.length; index += 1) {
+        await uploadOne(files[index], index, files.length);
       }
 
-      const signResponse = await fetch("/api/photos/upload-url", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          file_name: uploadFile.name,
-          content_type: uploadFile.type,
-        }),
-      });
-
-      if (!signResponse.ok) {
-        throw new Error((await signResponse.text()) || "创建上传链接失败");
-      }
-
-      const signed = (await signResponse.json()) as { path: string; token: string };
-      setUploadStatus(`正在上传 ${formatFileSize(uploadFile.size)}...`);
-
-      const { error: uploadError } = await supabase.storage
-        .from("shared-album")
-        .uploadToSignedUrl(signed.path, signed.token, uploadFile, {
-          contentType: uploadFile.type,
-          upsert: false,
-        });
-
-      if (uploadError) {
-        throw new Error(uploadError.message);
-      }
-
-      setUploadStatus("正在保存照片信息...");
-      const response = await fetch("/api/photos", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          storage_path: signed.path,
-          caption,
-          taken_at: takenAt,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error((await response.text()) || "保存照片失败");
-      }
-
-      setFile(null);
+      setFiles([]);
       setCaption("");
       setTakenAt("");
       setUploadStatus(null);
@@ -201,7 +209,7 @@ export function AlbumClient() {
             </div>
             <div>
               <p className="text-xs uppercase tracking-[0.3em] text-starlight/55">上传照片</p>
-              <p className="mt-1 text-sm text-starlight/70">大图会自动压缩，文件直传 Supabase，不再经过 Vercel 中转。</p>
+              <p className="mt-1 text-sm text-starlight/70">可以一次选择多张，大图会逐张压缩后直传 Supabase。</p>
             </div>
           </div>
 
@@ -211,23 +219,33 @@ export function AlbumClient() {
               <Input
                 type="file"
                 accept="image/*"
+                multiple
                 disabled={!session?.canEdit || submitting}
                 onChange={(event) => {
-                  setFile(event.target.files?.[0] ?? null);
+                  setFiles(Array.from(event.target.files ?? []));
                   setError(null);
                   setUploadStatus(null);
                 }}
               />
-              {file ? (
-                <p className="mt-2 text-xs text-starlight/60">
-                  原图 {formatFileSize(file.size)}
-                  {file.type === "image/gif" ? "，上传时会转成静态照片" : ""}
-                </p>
+              {files.length ? (
+                <div className="mt-2 space-y-1 text-xs text-starlight/60">
+                  <p>已选择 {files.length} 张，共 {formatFileSize(files.reduce((sum, item) => sum + item.size, 0))}</p>
+                  <p>超过 4MB 的照片会自动压缩，GIF 会转成静态照片。</p>
+                </div>
               ) : null}
             </div>
-            {previewUrl ? (
-              <div className="overflow-hidden rounded-[24px] border border-white/18 bg-white/8">
-                <img src={previewUrl} alt="照片预览" className="max-h-[320px] w-full object-cover" />
+            {previewItems.length ? (
+              <div className="grid gap-3 sm:grid-cols-3">
+                {previewItems.map((item) => (
+                  <div key={`${item.file.name}-${item.file.lastModified}`} className="overflow-hidden rounded-[20px] border border-white/18 bg-white/8">
+                    <img src={item.url} alt="照片预览" className="aspect-square w-full object-cover" />
+                  </div>
+                ))}
+                {files.length > previewItems.length ? (
+                  <div className="flex aspect-square items-center justify-center rounded-[20px] border border-white/18 bg-white/8 text-sm text-starlight/66">
+                    +{files.length - previewItems.length} 张
+                  </div>
+                ) : null}
               </div>
             ) : null}
             <div>
@@ -236,16 +254,23 @@ export function AlbumClient() {
             </div>
             <div>
               <FieldLabel>照片说明</FieldLabel>
-              <Textarea value={caption} disabled={!session?.canEdit || submitting} placeholder="写下这张照片里的地点、心情或一句话" onChange={(event) => setCaption(event.target.value)} />
+              <Textarea value={caption} disabled={!session?.canEdit || submitting} placeholder="这段说明会应用到本次上传的所有照片" onChange={(event) => setCaption(event.target.value)} />
             </div>
             {uploadStatus ? <p className="text-sm text-starlight/68">{uploadStatus}</p> : null}
             {error ? <p className="text-sm text-rose-200">{error}</p> : null}
-            <Button disabled={!session?.canEdit || !file || submitting} onClick={uploadPhoto}>
-              <span className="inline-flex items-center gap-2">
-                <UploadCloud className="h-4 w-4" />
-                {submitting ? "处理中" : "加入相册"}
-              </span>
-            </Button>
+            <div className="flex flex-wrap gap-3">
+              <Button disabled={!session?.canEdit || !files.length || submitting} onClick={uploadPhotos}>
+                <span className="inline-flex items-center gap-2">
+                  <UploadCloud className="h-4 w-4" />
+                  {submitting ? "处理中" : files.length > 1 ? `加入 ${files.length} 张照片` : "加入相册"}
+                </span>
+              </Button>
+              {files.length && !submitting ? (
+                <Button className="bg-white/8" onClick={() => setFiles([])}>
+                  清空选择
+                </Button>
+              ) : null}
+            </div>
           </div>
         </PaperCard>
 
