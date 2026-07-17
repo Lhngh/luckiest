@@ -74,7 +74,17 @@ export function AppProviders({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
-    void navigator.serviceWorker.register("/service-worker.js");
+    void navigator.serviceWorker.register("/service-worker.js").then((registration) => registration.update());
+
+    const handleMessage = (event: MessageEvent) => {
+      if (event.data?.type !== "SW_UPDATED") return;
+      if (sessionStorage.getItem("sw-reloaded") === "1") return;
+      sessionStorage.setItem("sw-reloaded", "1");
+      window.location.reload();
+    };
+
+    navigator.serviceWorker.addEventListener("message", handleMessage);
+    return () => navigator.serviceWorker.removeEventListener("message", handleMessage);
   }, []);
 
   const value = useMemo(
