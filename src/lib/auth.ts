@@ -43,7 +43,7 @@ export function getSessionFromCookies(): EditorSession | null {
 export function requireEditorSession() {
   const session = getSessionFromCookies();
   if (!session?.canEdit) {
-    throw new Error("仅限专属双人链接可编辑");
+    throw new Error("仅限专属双人链接编辑");
   }
   return session;
 }

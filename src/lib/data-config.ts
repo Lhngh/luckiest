@@ -8,6 +8,7 @@ type ResourceName =
   | "messages"
   | "wishes"
   | "long_distance_ideas"
+  | "album_photos"
   | "profiles";
 
 interface ResourceConfig {
@@ -97,6 +98,15 @@ export const resourceConfig: Record<ResourceName, ResourceConfig> = {
     allowCreate: true,
     allowPatch: false,
     allowDelete: true,
+  },
+  album_photos: {
+    table: "album_photos",
+    orderBy: "created_at",
+    ascending: false,
+    mutableFields: [],
+    allowCreate: false,
+    allowPatch: false,
+    allowDelete: false,
   },
 };
 

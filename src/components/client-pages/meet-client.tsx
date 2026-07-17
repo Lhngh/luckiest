@@ -114,7 +114,7 @@ export function MeetClient() {
             </div>
             <div>
               <FieldLabel>小记</FieldLabel>
-              <Textarea placeholder="比如想一起吃的店、要去的路、想拍的合照位" value={form.note} disabled={!session?.canEdit} onChange={(e) => setForm((prev) => ({ ...prev, note: e.target.value }))} />
+              <Textarea placeholder="比如想一起吃的店、要去的路、想拍的合照" value={form.note} disabled={!session?.canEdit} onChange={(e) => setForm((prev) => ({ ...prev, note: e.target.value }))} />
             </div>
             <div className="flex flex-wrap gap-3">
               <Button disabled={!session?.canEdit || submitting} onClick={handleSubmit}>{editingId ? "保存修改" : "新增计划"}</Button>

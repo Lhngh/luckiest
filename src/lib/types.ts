@@ -68,6 +68,16 @@ export interface LongDistanceIdea {
   created_at: string;
 }
 
+export interface AlbumPhoto {
+  id: string;
+  image_url: string;
+  storage_path: string;
+  caption: string | null;
+  taken_at: string | null;
+  user_id: ViewerKey;
+  created_at: string;
+}
+
 export interface EditorSession {
   viewer: ViewerKey;
   name: string;

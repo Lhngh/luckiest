@@ -55,17 +55,7 @@ function getTreePlacements(treeCount: number): SurfacePlacement[] {
   });
 }
 
-function OrbitBadge({
-  className,
-  title,
-  value,
-  href,
-}: {
-  className: string;
-  title: string;
-  value: string;
-  href?: string;
-}) {
+function OrbitBadge({ className, title, value, href }: { className: string; title: string; value: string; href?: string }) {
   const content = (
     <>
       <p className="text-[10px] uppercase tracking-[0.34em] text-starlight/52">{title}</p>
@@ -84,17 +74,7 @@ function OrbitBadge({
   return <div className={baseClass}>{content}</div>;
 }
 
-function SurfaceItem({
-  placement,
-  className,
-  children,
-  lift = 100,
-}: {
-  placement: SurfacePlacement;
-  className?: string;
-  children: ReactNode;
-  lift?: number;
-}) {
+function SurfaceItem({ placement, className, children, lift = 100 }: { placement: SurfacePlacement; className?: string; children: ReactNode; lift?: number }) {
   return (
     <div
       className={`absolute ${className ?? ""}`}
@@ -160,40 +140,24 @@ function BluePony() {
 function CoupleIllustration() {
   return (
     <svg viewBox="0 0 160 200" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full drop-shadow-[0_12px_18px_rgba(128,98,141,0.18)]">
-      {/* 女生 */}
       <g>
-        {/* 头发 */}
         <path d="M48 38C48 24 58 18 66 18C74 18 84 24 84 40C84 56 80 62 80 72C78 66 72 66 70 72C66 62 62 60 54 58C48 56 48 50 48 38Z" fill="#1B1117" />
-        {/* 马尾 */}
         <path d="M80 34C94 36 96 52 90 66C86 58 82 52 80 48Z" fill="#1B1117" />
-        {/* 蝴蝶结 */}
         <path d="M74 20L70 14L76 18L82 14L78 20Z" fill="#FFFFFF" />
-        {/* 脸 */}
         <circle cx="66" cy="42" r="12" fill="#F6D5C4" />
-        {/* 裙子 */}
         <path d="M54 58L48 130L84 130L78 58Z" fill="#FBF3EA" />
       </g>
-      {/* 男生 */}
       <g>
-        {/* 头发 */}
         <path d="M94 40C94 26 104 20 112 20C122 20 130 28 130 42C128 40 124 38 118 38C110 38 102 42 98 46C96 44 94 42 94 40Z" fill="#1C1218" />
-        {/* 脸 */}
         <circle cx="112" cy="44" r="11" fill="#EEC3B2" />
-        {/* 衬衫 */}
         <path d="M100 58L98 108L126 108L124 58Z" fill="#FFFFFF" />
-        {/* 裤子 */}
         <path d="M100 108L98 150L110 150L112 118L114 150L126 150L124 108Z" fill="#17131A" />
       </g>
     </svg>
   );
 }
 
-export function SceneHero({
-  countdownLabel,
-  meetLabel,
-  treeCount,
-  completedMeetCount,
-}: SceneHeroProps) {
+export function SceneHero({ countdownLabel, meetLabel, treeCount, completedMeetCount }: SceneHeroProps) {
   const treePlacements = getTreePlacements(treeCount);
   const mainPlacements = [
     {
@@ -241,13 +205,7 @@ export function SceneHero({
           <span
             key={index}
             className="absolute animate-twinkle rounded-full bg-white shadow-[0_0_14px_rgba(255,255,255,0.86)]"
-            style={{
-              top: star.top,
-              left: star.left,
-              width: `${star.size}px`,
-              height: `${star.size}px`,
-              animationDelay: star.delay,
-            }}
+            style={{ top: star.top, left: star.left, width: `${star.size}px`, height: `${star.size}px`, animationDelay: star.delay }}
           />
         ))}
 
@@ -289,12 +247,7 @@ export function SceneHero({
 
               <div className="absolute inset-0">
                 {treePlacements.map((placement, index) => (
-                  <SurfaceItem
-                    key={`tree-${index}`}
-                    placement={placement}
-                    lift={88}
-                    className="[animation-delay:0.2s]"
-                  >
+                  <SurfaceItem key={`tree-${index}`} placement={placement} lift={88} className="[animation-delay:0.2s]">
                     <PlanetTree scale={0.78 + (index % 4) * 0.08} />
                   </SurfaceItem>
                 ))}

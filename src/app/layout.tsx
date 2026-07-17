@@ -9,8 +9,8 @@ const display = Cormorant_Garamond({ subsets: ["latin"], variable: "--font-displ
 const body = Nunito({ subsets: ["latin"], variable: "--font-body", weight: ["400", "500", "600", "700"] });
 
 export const metadata: Metadata = {
-  title: "浩瀚",
-  description: "经典手绘夜空风格的双人专属记录空间",
+  title: "星月赴约",
+  description: "手绘夜空风格的双人专属记录空间",
   manifest: "/manifest.webmanifest",
 };
 

@@ -12,15 +12,15 @@ import type { MessageItem } from "@/lib/types";
 import { formatDateTime } from "@/lib/utils";
 
 const messageViewerName: Record<string, string> = {
-  xing: "糕糕",
-  yue: "汉堡",
+  xing: "星星",
+  yue: "月月",
 };
 
 export function MessageClient() {
   const { session } = useEditorSession();
   const { data, refresh } = useCollection<MessageItem>("messages", "messages");
   const [content, setContent] = useState("");
-  const [mood, setMood] = useState("☆");
+  const [mood, setMood] = useState("☁");
 
   async function submit() {
     if (!content) return;
@@ -67,7 +67,7 @@ export function MessageClient() {
               <div key={item.id} className="rounded-[24px] border border-white/16 bg-white/8 p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3 text-starlight">
-                    <span className="text-xl">{item.mood ?? "☆"}</span>
+                    <span className="text-xl">{item.mood ?? "☁"}</span>
                     <span className="font-medium">{messageViewerName[item.user_id] ?? viewerMeta[item.user_id].name}</span>
                   </div>
                   <span className="text-xs text-starlight/60">{formatDateTime(item.created_at)}</span>

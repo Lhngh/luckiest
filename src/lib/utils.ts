@@ -8,12 +8,12 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatDate(date?: string | null, pattern = "yyyy.MM.dd") {
-  if (!date) return "未设定";
+  if (!date) return "未设置";
   return format(new Date(date), pattern, { locale: zhCN });
 }
 
 export function formatDateTime(date?: string | null) {
-  if (!date) return "未设定";
+  if (!date) return "未设置";
   return format(new Date(date), "yyyy.MM.dd HH:mm", { locale: zhCN });
 }
 

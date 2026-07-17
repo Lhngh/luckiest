@@ -67,7 +67,7 @@ export function EnjoyClient() {
             </div>
             <div>
               <FieldLabel>观后感</FieldLabel>
-              <Textarea value={form.review} disabled={!session?.canEdit} placeholder="留下些什么余韵" onChange={(e) => setForm((prev) => ({ ...prev, review: e.target.value }))} />
+              <Textarea value={form.review} disabled={!session?.canEdit} placeholder="留下一点余韵" onChange={(e) => setForm((prev) => ({ ...prev, review: e.target.value }))} />
             </div>
             <Button disabled={!session?.canEdit} onClick={saveEnjoy}>{editingId ? "保存共赏" : "新增共赏项"}</Button>
           </div>

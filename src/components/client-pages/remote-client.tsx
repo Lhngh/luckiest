@@ -71,7 +71,7 @@ export function RemoteClient() {
 
       <PaperCard>
         <p className="text-sm leading-8 text-starlight/78">
-          这里不会展示全部候选池，只会随机掉落一件适合你们现在就去完成的小事。想换一个，就再抽一次。
+          这里不会展示全部候选池，只会随机掉落一件适合你们现在去完成的小事。想换一个，就再抽一次。
         </p>
       </PaperCard>
 
